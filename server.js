@@ -15,6 +15,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
+const PUBLIC_DATA_FILE = path.join(__dirname, 'public', 'data.json');
 
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -35,6 +36,12 @@ const upload = multer({ storage });
 
 // Load data from file (for read-only serving in production)
 let portfolioData = require(DATA_FILE);
+// Keep a static copy for production (served as /data.json)
+try {
+    fs.writeFileSync(PUBLIC_DATA_FILE, JSON.stringify(portfolioData, null, 2));
+} catch (e) {
+    console.warn('Warning: Unable to write public/data.json at startup:', e?.message);
+}
 
 
 // 
@@ -51,6 +58,8 @@ if (process.env.NODE_ENV !== 'production') {
         try {
             portfolioData = req.body;
             fs.writeFileSync(DATA_FILE, JSON.stringify(portfolioData, null, 2));
+            // Mirror to public for static production reads
+            try { fs.writeFileSync(PUBLIC_DATA_FILE, JSON.stringify(portfolioData, null, 2)); } catch {}
             res.json({ ok: true });
         } catch (e) {
             res.status(400).json({ ok: false, error: e.toString() });
@@ -116,6 +125,8 @@ if (process.env.NODE_ENV !== 'production') {
 
         portfolioData = data;
         fs.writeFileSync(DATA_FILE, JSON.stringify(portfolioData, null, 2));
+        // Mirror to public for static production reads
+        try { fs.writeFileSync(PUBLIC_DATA_FILE, JSON.stringify(portfolioData, null, 2)); } catch {}
         res.json({ success: true, data: portfolioData });
     });
 }
