@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title id="pg-title">Portfolio</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
@@ -412,31 +413,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
     </div>
   </section>
 
-  <!-- Contact -->
-  <section id="sec-ct" class="sec">
-    <div class="wrap">
-      <div class="divider"></div>
-      <div class="ct-cx">
-        <span class="sec-lbl">Get In Touch</span>
-        <h2 class="sec-h2" style="margin-bottom:14px">Let's Build <em>Together</em></h2>
-        <p style="color:var(--mu);line-height:1.75;margin-bottom:40px;font-size:.9rem">Have a project in mind? I'd love to hear from you.</p>
-        <div class="glass ct-fm">
-          <div class="ct-g">
-            <div><label class="lbl">Name</label><input class="inp" id="c-nm" placeholder="Your name"/></div>
-            <div><label class="lbl">Email</label><input class="inp" type="email" id="c-em" placeholder="your@email.com"/></div>
-          </div>
-          <div class="frow"><label class="lbl">Message</label><textarea class="inp" id="c-ms" rows="5" placeholder="Tell me about your project..." style="resize:vertical"></textarea></div>
-          <div id="c-err" class="err-b" style="display:none"></div>
-          <div id="c-ok"  class="ok-b"  style="display:none">✓ Message sent!</div>
-          <button class="btn bp" id="c-sb" onclick="ctSubmit()" style="width:100%;justify-content:center">Send Message →</button>
-        </div>
-        <div class="ct-ft">
-          <div><div class="ci-l">✉ EMAIL</div><div class="ci-v" id="ci-em">—</div></div>
-          <div><div class="ci-l">📍 LOCATION</div><div class="ci-v" id="ci-loc">—</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- Footer -->
   <footer id="ft">
@@ -584,19 +561,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
         </p>
       </div>
 
-      <div class="sub-h">Contact Form Webhook</div>
-      <div class="glass" style="border-radius:13px;padding:20px;margin-bottom:20px">
-        <p style="color:var(--mu);font-size:.84rem;line-height:1.65;margin-bottom:16px">On production (Vercel), the contact form can POST to a webhook URL. Set it here:</p>
-        <div class="frow"><label class="lbl">Webhook URL</label><input class="inp" id="a-wh" placeholder="https://your-webhook.com/endpoint"/></div>
-        <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);margin-top:10px;margin-bottom:6px">PAYLOAD SENT:</div>
-        <div class="code-b">{
-  "name":            "Visitor Name",
-  "email":           "visitor@email.com",
-  "message":         "Their message",
-  "timestamp":       "2025-01-01T12:00:00.000Z",
-  "portfolio_owner": "Your Name"
-}</div>
-      </div>
+      
 
       <div class="sub-h">Admin Access</div>
       <div class="glass" style="border-radius:13px;padding:20px">
@@ -758,8 +723,7 @@ function renderPort() {
   [ [s.hero!==false,'#hero','About'],
     [s.skills!==false,'#sec-sk','Skills'],
     [s.experience!==false,'#sec-ex','Experience'],
-    [s.projects!==false,'#sec-pr','Projects'],
-    [s.contact!==false,'#sec-ct','Contact']
+    [s.projects!==false,'#sec-pr','Projects']
   ].forEach(([show,href,label]) => {
     if(!show) return;
     const b = mk('button','nav-a'); b.textContent = label;
@@ -770,16 +734,14 @@ function renderPort() {
   sv('sec-sk',  s.skills!==false);
   sv('sec-ex',  s.experience!==false);
   sv('sec-pr',  s.projects!==false);
-  sv('sec-ct',  s.contact!==false);
   document.getElementById('h-n1').textContent = pts[0]||'';
   document.getElementById('h-n2').textContent = pts.slice(1).join(' ')||'';
   document.getElementById('h-bio').textContent = d.bio||'';
   startTW([d.role||'Developer','Creative Technologist','Problem Solver']);
 
   const hb = document.getElementById('h-btns'); hb.innerHTML = '';
-  if(s.contact!==false) hb.innerHTML += `<button class="btn bp" onclick="ss('#sec-ct')">Get In Touch</button>`;
   if(s.projects!==false) hb.innerHTML += `<button class="btn bg_" onclick="ss('#sec-pr')">View Work</button>`;
-  if(s.cv!==false && d.cvUrl) hb.innerHTML += `<a href="${x(d.cvUrl)}" target="_blank" rel="noreferrer"><button class="btn bg_" style="border-color:var(--a2);color:var(--a2)">↓ Download CV</button></a>`;
+  if(s.cv!==false && d.cvUrl) hb.innerHTML += `<a href="${x(d.cvUrl)}" download="CV.pdf"><button class="btn bg_" style="border-color:var(--a2);color:var(--a2)">↓ Download CV</button></a>`;
 
   const yrs = calcY(d.experience||[]);
   document.getElementById('h-stats').innerHTML =
@@ -798,7 +760,7 @@ function renderPort() {
   const pl = document.getElementById('p-lnks'); pl.innerHTML='';
   if(s.github!==false&&d.github) pl.innerHTML+=`<a href="${x(d.github)}" target="_blank" rel="noreferrer" class="ilink">GH</a>`;
   if(s.linkedin!==false&&d.linkedin) pl.innerHTML+=`<a href="${x(d.linkedin)}" target="_blank" rel="noreferrer" class="ilink">LI</a>`;
-  if(s.cv!==false&&d.cvUrl) pl.innerHTML+=`<a href="${x(d.cvUrl)}" target="_blank" rel="noreferrer" class="ilink">CV</a>`;
+  if(s.cv!==false&&d.cvUrl) pl.innerHTML+=`<a href="${x(d.cvUrl)}" download class="ilink">CV</a>`;
 
   // Skills
   const sl = document.getElementById('sk-ls'); sl.innerHTML='';
@@ -849,8 +811,7 @@ function renderPort() {
     pg.appendChild(card);
   });
 
-  document.getElementById('ci-em').textContent  = d.email||'—';
-  document.getElementById('ci-loc').textContent = d.location||'—';
+  // Contact section removed: no ci-em / ci-loc updates
   document.getElementById('ft-nm').textContent  = pts[0]||'';
   const fl=document.getElementById('ft-ls'); fl.innerHTML='';
   if(s.github!==false&&d.github) fl.innerHTML+=`<a href="${x(d.github)}" target="_blank" rel="noreferrer" class="ilink">GH</a>`;
@@ -898,26 +859,7 @@ function escOv(e){if(e.key==='Escape')closeOv();}
 /* ────────────────────────────────────────
    CONTACT
 ──────────────────────────────────────── */
-async function ctSubmit(){
-  const nm=gv('c-nm'),em=gv('c-em'),ms=gv('c-ms');
-  const er=document.getElementById('c-err'),ok=document.getElementById('c-ok'),btn=document.getElementById('c-sb');
-  er.style.display='none';ok.style.display='none';
-  if(!nm||!em||!ms){er.textContent='Please fill in all fields.';er.style.display='';return;}
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Sending...';
-  try{
-    if(IS_LOCAL){
-      const r=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,message:ms})});
-      const j=await r.json();
-      if(!r.ok){er.textContent=j.error||'Error';er.style.display='';btn.disabled=false;btn.innerHTML='Send Message →';return;}
-    } else if(D.webhookUrl){
-      await fetch(D.webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,message:ms,timestamp:new Date().toISOString(),portfolio_owner:D.name})}).catch(()=>{});
-    }
-    ok.style.display='';
-    ['c-nm','c-em','c-ms'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-    setTimeout(()=>ok.style.display='none',5000);
-  }catch{er.textContent='Network error.';er.style.display='';}
-  btn.disabled=false;btn.innerHTML='Send Message →';
-}
+// Contact form removed
 
 /* ────────────────────────────────────────
    CARD TILT
@@ -942,7 +884,7 @@ function populateAdmin(){
   siv('a-name',d.name); siv('a-role',d.role); siv('a-bio',d.bio);
   siv('a-email',d.email); siv('a-loc',d.location);
   siv('a-gh',d.github); siv('a-li',d.linkedin);
-  siv('a-cvurl',d.cvUrl||''); siv('a-wh',d.webhookUrl||'');
+  siv('a-cvurl',d.cvUrl||'');
   siv('a-tools',(d.tools||[]).join(', '));
   renderPP(d.profileImage); renderCVSt(d.cvUrl||'');
   renderSkAdm(); renderExAdm(); renderPrAdm(); renderSecAdm();
@@ -1054,7 +996,6 @@ const SECS=[
   ['skills',    'Skills Section',       'Technical skills & tools'],
   ['experience','Experience Section',   'Work history timeline'],
   ['projects',  'Projects Section',     'Project showcase grid'],
-  ['contact',   'Contact Section',      'Contact form'],
   ['github',    'GitHub Link',          'Profile card & footer'],
   ['linkedin',  'LinkedIn Link',        'Profile card & footer'],
   ['cv',        'CV Download Button',   'Download button in hero'],
@@ -1094,7 +1035,6 @@ async function adminSave(){
   AD.location   = gv('a-loc')   || AD.location;
   AD.github     = gv('a-gh');
   AD.linkedin   = gv('a-li');
-  AD.webhookUrl = gv('a-wh');
   const cvf     = gv('a-cvurl'); if(cvf) AD.cvUrl=cvf;
   AD.tools      = (gv('a-tools')||'').split(',').map(s=>s.trim()).filter(Boolean);
 
@@ -1121,8 +1061,9 @@ async function adminSave(){
     const j=await r.json();
     if(!j.ok) throw new Error(j.error||'Save failed');
 
-    // Update live data
+    // Update live data and re-render portfolio if visible
     D=JSON.parse(JSON.stringify(AD));
+    try { if (location.hash==="#portfolio") renderPort(); } catch {}
 
     pill.textContent='✓ data.js updated — git push to deploy';
     pill.className='ab-pill saved'; pill.style.display='';
@@ -1164,8 +1105,8 @@ function embeddedDefaults(){
   return{
     name:'Alex Rivera',role:'Full-Stack Developer & UI/UX Designer',
     bio:"I build beautiful, functional things for the web.",
-    email:'alex@portfolio.dev',location:'San Francisco, CA',github:'',linkedin:'',cvUrl:'',profileImage:null,webhookUrl:'',
-    sections:{hero:true,skills:true,experience:true,projects:true,contact:true,github:true,linkedin:true,cv:true},
+    email:'alex@portfolio.dev',location:'San Francisco, CA',github:'',linkedin:'',cvUrl:'',profileImage:null,
+    sections:{hero:true,skills:true,experience:true,projects:true,github:true,linkedin:true,cv:true},
     tools:['React','TypeScript','Node.js','Python','PostgreSQL','Docker','AWS','Figma','Git'],
     skills:[{name:'React / Next.js',level:95},{name:'TypeScript',level:90},{name:'Node.js',level:85},{name:'UI/UX Design',level:80}],
     experience:[{company:'NeuralTech Inc.',role:'Senior Frontend Engineer',period:'2022 — Present',desc:'Lead developer for AI-powered SaaS platform.'},{company:'Freelance',role:'Independent Consultant',period:'2018 — 2022',desc:'Delivered 20+ projects for startups.'}],
