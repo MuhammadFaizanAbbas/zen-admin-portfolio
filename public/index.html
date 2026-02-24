@@ -311,7 +311,12 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 ════════════════════════════════════════ */
 @media(max-width:900px){
   .hero-g{grid-template-columns:1fr}
-  #hcard{display:none}
+  /* Show and enlarge the profile card on mobile */
+  #hcard{display:block;margin-top:18px}
+  .pcard{padding:32px}
+  .pav{width:96px;height:96px;font-size:2rem}
+  .pname{font-size:1.4rem}
+  .pem{font-size:.7rem}
   .sk-g{grid-template-columns:1fr}
   .pg{grid-template-columns:1fr}
   .nav-ls{display:none}
@@ -960,7 +965,7 @@ function renderExAdm(){
 function addExp(){
   AD.experience=AD.experience||[];
   const now=new Date();
-  AD.experience.push({company:'Company',role:'Role',startMonth:now.getMonth()+1,startYear:now.getFullYear(),current:true,desc:'Description.'});
+  AD.experience.unshift({company:'Company',role:'Role',startMonth:now.getMonth()+1,startYear:now.getFullYear(),current:true,desc:'Description.'});
   renderExAdm();
 }
 
