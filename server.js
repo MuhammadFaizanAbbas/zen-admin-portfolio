@@ -13,9 +13,9 @@ app.use(cors());
 app.use(express.json({ limit: '25mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const DATA_FILE = path.join(__dirname, 'data.json');
 const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
-const PUBLIC_DATA_FILE = path.join(__dirname, 'public', 'data.json');
+const DATA_FILE = path.join(__dirname, 'public', 'data.json');
+const LEGACY_ROOT_DATA = path.join(__dirname, 'data.json');
 
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -34,13 +34,54 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Load data from file (for read-only serving in production)
-let portfolioData = require(DATA_FILE);
-// Keep a static copy for production (served as /data.json)
+// Ensure data file exists and load it (single source of truth: public/data.json)
+const DEFAULT_DATA = {
+    name: '', role: '', bio: '', email: '', location: '',
+    github: '', linkedin: '', cvUrl: '', profileImage: null,
+    sections: { hero: true, skills: true, experience: true, projects: true, github: true, linkedin: true, cv: true },
+    skills: [], experience: [], projects: [], tools: []
+};
+
+function removeLegacyRoot(){
+    try {
+        if (fs.existsSync(LEGACY_ROOT_DATA)) {
+            // If someone wrote to the legacy file, merge it into the canonical file so nothing is lost
+            try {
+                const raw = fs.readFileSync(LEGACY_ROOT_DATA, 'utf8');
+                try { const parsed = JSON.parse(raw); fs.writeFileSync(DATA_FILE, JSON.stringify(parsed, null, 2)); } catch {}
+            } catch {}
+            // Try to delete; if that fails (e.g., locked), try to move it out of the way
+            try {
+                fs.unlinkSync(LEGACY_ROOT_DATA);
+            } catch {
+                try {
+                    const stamp = new Date().toISOString().replace(/[:.]/g,'-');
+                    const dest = path.join(__dirname, 'public', `_legacy_data_${stamp}.json`);
+                    fs.renameSync(LEGACY_ROOT_DATA, dest);
+                } catch {
+                    // As a last resort, overwrite with a pointer note
+                    try { fs.writeFileSync(LEGACY_ROOT_DATA, '{"__note":"Data has moved to public/data.json"}'); } catch {}
+                }
+            }
+        }
+    } catch {}
+}
+
 try {
-    fs.writeFileSync(PUBLIC_DATA_FILE, JSON.stringify(portfolioData, null, 2));
+    if (!fs.existsSync(DATA_FILE)) {
+        fs.writeFileSync(DATA_FILE, JSON.stringify(DEFAULT_DATA, null, 2));
+    }
+    // If an old root-level data.json exists, remove it to avoid confusion
+    removeLegacyRoot();
 } catch (e) {
-    console.warn('Warning: Unable to write public/data.json at startup:', e?.message);
+    console.warn('Warning: Unable to initialize public/data.json:', e?.message);
+}
+
+let portfolioData;
+try {
+    portfolioData = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+} catch {
+    portfolioData = DEFAULT_DATA;
 }
 
 
@@ -58,8 +99,7 @@ if (process.env.NODE_ENV !== 'production') {
         try {
             portfolioData = req.body;
             fs.writeFileSync(DATA_FILE, JSON.stringify(portfolioData, null, 2));
-            // Mirror to public for static production reads
-            try { fs.writeFileSync(PUBLIC_DATA_FILE, JSON.stringify(portfolioData, null, 2)); } catch {}
+            removeLegacyRoot();
             res.json({ ok: true });
         } catch (e) {
             res.status(400).json({ ok: false, error: e.toString() });
@@ -125,10 +165,14 @@ if (process.env.NODE_ENV !== 'production') {
 
         portfolioData = data;
         fs.writeFileSync(DATA_FILE, JSON.stringify(portfolioData, null, 2));
-        // Mirror to public for static production reads
-        try { fs.writeFileSync(PUBLIC_DATA_FILE, JSON.stringify(portfolioData, null, 2)); } catch {}
+        removeLegacyRoot();
         res.json({ success: true, data: portfolioData });
     });
+}
+
+// As an extra guard during development, periodically remove legacy root file if it reappears
+if (process.env.NODE_ENV !== 'production') {
+    setInterval(removeLegacyRoot, 2000);
 }
 
 app.listen(PORT, () => {

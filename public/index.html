@@ -640,13 +640,6 @@ function animLD() {
 
 async function loadData() {
   try {
-    // Local dev: read from Express API
-    if (IS_LOCAL) {
-      const r = await fetch('/api/data');
-      const j = await r.json();
-      if (j.ok) { D = j.data; return; }
-    }
-    // Production (Vercel): read from static data.json
     const r = await fetch('/data.json');
     D = await r.json();
   } catch(e) {
@@ -1024,7 +1017,7 @@ function togS(k){
 }
 
 /* ────────────────────────────────────────
-   ADMIN SAVE → writes data.js + data.json
+  ADMIN SAVE → writes public/data.json
 ──────────────────────────────────────── */
 async function adminSave(){
   // Collect all form values
