@@ -209,7 +209,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif}
 
 /* Overlay */
 .ov-bg{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;backdrop-filter:blur(12px);cursor:pointer}
-.ov-pn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:92%;max-width:840px;max-height:90vh;overflow-y:auto;border-radius:22px;overflow:hidden;border:1px solid rgba(0,245,160,.2)}
+.ov-pn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:92%;max-width:840px;max-height:90vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border-radius:22px;border:1px solid rgba(0,245,160,.2)}
 .ov-img{height:250px;background:linear-gradient(135deg,rgba(0,245,160,.07),rgba(0,217,245,.07));position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--bor)}
 .ov-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ov-ph{text-align:center}
