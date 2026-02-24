@@ -1,7 +1,7 @@
 {
   "name": "Muhammad Faizan Abbas",
   "role": "Ai & Automation Engineer | Software Engineer",
-  "bio": "I build beautiful, functional things for the web.",
+  "bio": "Results driven AI & Automation Engineer and Software Engineer with hands on experience designing and deploying production grade automation systems. Skilled in building scalable workflows, integrating APIs, and leveraging AI to optimize business processes. Experienced in end to end development from requirement analysis to deployment ensuring reliable, efficient, and maintainable solutions.\n\nProficient in automation tools, backend systems, and modern development frameworks, with a strong focus on problem solving and performance optimization. Passionate about using AI driven solutions to streamline operations, reduce manual effort, and drive measurable business impact.",
   "email": "muhammadfaizan_abbas@icloud.com",
   "location": "Multan, PK",
   "github": "https://github.com/MuhammadFaizanAbbas",
@@ -54,16 +54,35 @@
   ],
   "experience": [
     {
-      "company": "NeuralTech Inc.",
-      "role": "Senior Frontend Engineer",
-      "period": "2022 — Present",
-      "desc": "Lead developer for AI-powered SaaS platform."
+      "company": "SparkoSol",
+      "role": "Automation Engineer",
+      "period": "",
+      "desc": "Currently working as an Automation Engineer and Software Engineer at Sparkosol, designing and deploying production grade automation systems for real world business operations. Responsible for building scalable workflows, integrating third party APIs, and developing AI powered solutions that streamline processes and reduce manual workload.\n\nWorking extensively with automation platforms (e.g., n8n), webhooks, data normalization pipelines, and custom backend logic to create reliable, efficient systems. Involved in requirement analysis, system design, development, testing, and deployment ensuring high performance and maintainability.\n\nActively contributing to automation driven innovation, including AI assisted text processing, lead generation workflows, CRM automation, and batch data processing solutions that deliver measurable business impact.",
+      "startMonth": 10,
+      "startYear": 2025,
+      "endMonth": null,
+      "endYear": null,
+      "current": true
     },
     {
-      "company": "Freelance",
-      "role": "Independent Consultant",
-      "period": "2018 — 2022",
-      "desc": "Delivered 20+ projects for startups."
+      "company": "SparkoSol",
+      "role": "Automation Intern",
+      "startMonth": 7,
+      "startYear": 2025,
+      "current": false,
+      "desc": "Served as an Automation Intern at Sparkosol, where I developed and implemented production grade automation solutions to streamline business operations. Worked on real client projects involving workflow automation, API integrations, and data processing pipelines. Leveraged tools such as n8n, webhooks, and custom scripting to design efficient, reliable, and scalable automation systems.\n\nCollaborated closely with cross functional teams to gather requirements, identify bottlenecks, and deliver solutions that reduced manual effort and improved operational efficiency. Gained practical experience in end to end automation development from conceptualization and prototyping to deployment and monitoring while following best practices for clean, maintainable code.",
+      "endMonth": 10,
+      "endYear": 2025
+    },
+    {
+      "company": "Young Dev Intern",
+      "role": "Web Intern",
+      "startMonth": 9,
+      "startYear": 2024,
+      "current": false,
+      "desc": "Completed a remote internship as a Web Development Intern at Young Dev Interns, where I gained hands on experience in frontend web development under professional supervision. Contributed to real world learning tasks and successfully developed two fully functional demo projects, applying core concepts of HTML, CSS, and JavaScript.\n\nDuring the internship, I strengthened my understanding of responsive design, clean UI structure, and basic deployment practices. Worked closely with mentors, received code reviews, and improved problem-solving skills through practical implementation. This experience enhanced my ability to write structured, maintainable code and collaborate effectively in a remote development environment.",
+      "endMonth": 10,
+      "endYear": 2024
     }
   ],
   "projects": [

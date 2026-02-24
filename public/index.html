@@ -773,7 +773,7 @@ function renderPort() {
     const div=mk('div','tl-it');
     div.innerHTML=`<div class="tl-dot ${i===0?'now':''}"></div>
       <div class="glass ec" onmouseenter="this.style.borderColor='rgba(0,245,160,.3)'" onmouseleave="this.style.borderColor='var(--bor)'">
-        <div class="ec-hd"><div><div class="ec-role">${x(e.role)}</div><div class="ec-co">${x(e.company)}</div></div><div class="ec-per">${x(e.period)}</div></div>
+        <div class="ec-hd"><div><div class="ec-role">${x(e.role)}</div><div class="ec-co">${x(e.company)}</div></div><div class="ec-per">${x(fmtPeriod(e))}</div></div>
         <div class="ec-desc">${x(e.desc)}</div>
       </div>`;
     el.appendChild(div);
@@ -922,18 +922,47 @@ function renderExAdm(){
   const list=document.getElementById('ex-adm');list.innerHTML='';
   (AD.experience||[]).forEach((e,i)=>{
     const card=mk('div','glass acard');
+    const sm = e.startMonth||1, sy = e.startYear||new Date().getFullYear();
+    const em = e.endMonth||null, ey = e.endYear||null, cur = !!e.current;
     card.innerHTML=`
       <button class="btn bd bsm del-abs" onclick="AD.experience.splice(${i},1);renderExAdm()">DEL</button>
       <div class="g3 frow">
         <div><label class="lbl">Company</label><input class="inp" value="${x(e.company)}" onchange="AD.experience[${i}].company=this.value"/></div>
         <div><label class="lbl">Role</label><input class="inp" value="${x(e.role)}" onchange="AD.experience[${i}].role=this.value"/></div>
-        <div><label class="lbl">Period</label><input class="inp" value="${x(e.period)}" onchange="AD.experience[${i}].period=this.value"/></div>
+        <div><label class="lbl">Currently Working</label><button class="tog ${cur?'on':''}" onclick="AD.experience[${i}].current=!AD.experience[${i}].current; if(AD.experience[${i}].current){AD.experience[${i}].endMonth=null;AD.experience[${i}].endYear=null;} renderExAdm()"></button></div>
+      </div>
+      <div class="g3 frow">
+        <div>
+          <label class="lbl">Start Month</label>
+          <select class="inp" onchange="AD.experience[${i}].startMonth=+this.value">${[...Array(12)].map((_,m)=>`<option value="${m+1}" ${m+1===sm?'selected':''}>${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m]}</option>`).join('')}</select>
+        </div>
+        <div>
+          <label class="lbl">Start Year</label>
+          <input class="inp" type="number" min="1950" max="2099" value="${sy}" onchange="AD.experience[${i}].startYear=+this.value"/>
+        </div>
+        <div></div>
+      </div>
+      <div class="g3 frow">
+        <div>
+          <label class="lbl">End Month</label>
+          <select class="inp" ${cur?'disabled':''} onchange="AD.experience[${i}].endMonth=+this.value">${['<option value="">—</option>',...Array(12).fill(0).map((_,m)=>`<option value="${m+1}" ${em===m+1?'selected':''}>${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m]}</option>`)].join('')}</select>
+        </div>
+        <div>
+          <label class="lbl">End Year</label>
+          <input class="inp" type="number" ${cur?'disabled':''} min="1950" max="2099" value="${ey||''}" onchange="AD.experience[${i}].endYear=this.value?+this.value:null"/>
+        </div>
+        <div></div>
       </div>
       <div><label class="lbl">Description</label><textarea class="inp" rows="2" style="resize:vertical" onchange="AD.experience[${i}].desc=this.value">${x(e.desc)}</textarea></div>`;
     list.appendChild(card);
   });
 }
-function addExp(){AD.experience=AD.experience||[];AD.experience.push({company:'Company',role:'Role',period:'2024 — Present',desc:'Description.'});renderExAdm();}
+function addExp(){
+  AD.experience=AD.experience||[];
+  const now=new Date();
+  AD.experience.push({company:'Company',role:'Role',startMonth:now.getMonth()+1,startYear:now.getFullYear(),current:true,desc:'Description.'});
+  renderExAdm();
+}
 
 /* ── Projects ── */
 function renderPrAdm(){
@@ -1092,7 +1121,35 @@ function ss(sel){document.querySelector(sel)?.scrollIntoView({behavior:'smooth'}
 function sv(id,vis){const e=document.getElementById(id);if(e)e.style.display=vis?'':'none';}
 function b64(file,cb){const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(file);}
 function setY(){const y=new Date().getFullYear();document.querySelectorAll('#ft-yr').forEach(e=>e.textContent=y);const h=document.getElementById('h-yr');if(h)h.textContent=`Portfolio ${y}`;}
-function calcY(exp){let m=new Date().getFullYear();exp.forEach(e=>{const r=(e.period||'').match(/(\d{4})/);if(r&&+r[1]<m)m=+r[1];});return new Date().getFullYear()-m;}
+function calcY(exp){
+  const now=new Date();
+  let min=null;
+  (exp||[]).forEach(e=>{
+    if(e.startYear){
+      const m=(e.startMonth?e.startMonth:1)-1; const d=new Date(e.startYear,m,1);
+      if(!min||d<min) min=d;
+    } else {
+      const r=(e.period||'').match(/(19|20)\d{2}/);
+      if(r){ const d=new Date(+r[0],0,1); if(!min||d<min) min=d; }
+    }
+  });
+  if(!min) return 0;
+  const months=(now.getFullYear()-min.getFullYear())*12 + (now.getMonth()-min.getMonth());
+  return Math.round((months/12)*10)/10; // one decimal year accuracy
+}
+
+function fmtPeriod(e){
+  const mnames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(e.startYear){
+    const sm=e.startMonth?mnames[e.startMonth-1]+' ':'', sy=e.startYear;
+    let end;
+    if(e.current) end='Present';
+    else if(e.endYear){ end=(e.endMonth?mnames[e.endMonth-1]+' ':'')+e.endYear; }
+    else end='';
+    return `${sm}${sy} — ${end||''}`.trim();
+  }
+  return e.period||'';
+}
 
 function embeddedDefaults(){
   return{
