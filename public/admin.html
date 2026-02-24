@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Admin Panel</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    label { display: block; margin-top: 10px; }
+    textarea, input[type=text], input[type=email], input[type=url] {
+      width: 100%; padding:0.4em; margin-top:3px;
+    }
+    input[type=submit] { margin-top: 20px; }
+    .success { color: green; margin-top: 8px; }
+    .error { color: red; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Portfolio Admin Panel</h1>
+  <form id="adminForm">
+    <label>Name <input type="text" name="name" required></label>
+    <label>Role <input type="text" name="role"></label>
+    <label>Bio <textarea name="bio"></textarea></label>
+    <label>Email <input type="email" name="email"></label>
+    <label>Location <input type="text" name="location"></label>
+    <label>GitHub <input type="url" name="github"></label>
+    <label>LinkedIn <input type="url" name="linkedin"></label>
+    <label>CV URL <input type="url" name="cvUrl"></label>
+    <label>Profile Image URL <input type="url" name="profileImage"></label>
+    <label>Webhook URL <input type="url" name="webhookUrl"></label>
+    <label>Sections (toggle on/off):<br>
+      <input type="checkbox" name="sections.hero"> Hero
+      <input type="checkbox" name="sections.skills"> Skills
+      <input type="checkbox" name="sections.experience"> Experience
+      <input type="checkbox" name="sections.projects"> Projects
+      <input type="checkbox" name="sections.contact"> Contact
+    </label>
+    <label>Skills (comma-separated) <input type="text" name="skills"></label>
+    <label>Experience (JSON array) <textarea name="experience" rows="5"></textarea></label>
+    <label>Projects (JSON array) <textarea name="projects" rows="5"></textarea></label>
+    <input type="submit" value="Save">
+    <div id="message"></div>
+  </form>
+  <script>
+    async function fetchData() {
+      const res = await fetch('/api/portfolio');
+      const data = await res.json();
+      const f = document.forms.adminForm;
+      f.name.value = data.name;
+      f.role.value = data.role;
+      f.bio.value = data.bio;
+      f.email.value = data.email;
+      f.location.value = data.location;
+      f.github.value = data.github;
+      f.linkedin.value = data.linkedin;
+      f.cvUrl.value = data.cvUrl;
+      f.profileImage.value = data.profileImage || '';
+      f.webhookUrl.value = data.webhookUrl;
+      // sections
+      f['sections.hero'].checked = !!data.sections.hero;
+      f['sections.skills'].checked = !!data.sections.skills;
+      f['sections.experience'].checked = !!data.sections.experience;
+      f['sections.projects'].checked = !!data.sections.projects;
+      f['sections.contact'].checked = !!data.sections.contact;
+      // skills
+      f.skills.value = (data.skills || []).join(', ');
+      // experience/projects (edit as JSON)
+      f.experience.value = JSON.stringify(data.experience || [], null, 2);
+      f.projects.value = JSON.stringify(data.projects || [], null, 2);
+    }
+    fetchData();
+
+    document.getElementById('adminForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const f = this;
+      const portfolio = {
+        name: f.name.value,
+        role: f.role.value,
+        bio: f.bio.value,
+        email: f.email.value,
+        location: f.location.value,
+        github: f.github.value,
+        linkedin: f.linkedin.value,
+        cvUrl: f.cvUrl.value,
+        profileImage: f.profileImage.value,
+        webhookUrl: f.webhookUrl.value,
+        sections: {
+          hero: f['sections.hero'].checked,
+          skills: f['sections.skills'].checked,
+          experience: f['sections.experience'].checked,
+          projects: f['sections.projects'].checked,
+          contact: f['sections.contact'].checked,
+        },
+        skills: f.skills.value.split(',').map(s => s.trim()).filter(Boolean),
+        experience: [],
+        projects: [],
+      };
+      // Parse JSON fields
+      try {
+        if(f.experience.value.trim()) portfolio.experience = JSON.parse(f.experience.value);
+      } catch(e) {
+        showMsg('Invalid JSON in experience', true); return;
+      }
+      try {
+        if(f.projects.value.trim()) portfolio.projects = JSON.parse(f.projects.value);
+      } catch(e) {
+        showMsg('Invalid JSON in projects', true); return;
+      }
+      // Save
+      const res = await fetch('/api/portfolio', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(portfolio)});
+      const resp = await res.json();
+      if(resp.success) showMsg('Saved successfully!');
+      else showMsg('Error saving', true);
+    };
+    function showMsg(msg, err) {
+      document.getElementById('message').innerHTML = `<span class="${err ? 'error' : 'success'}">${msg}</span>`;
+    }
+  </script>
+</body>
+</html>

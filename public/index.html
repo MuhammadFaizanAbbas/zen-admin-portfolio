@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title id="pg-title">Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════
+   BASE RESET & VARS
+════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050508;--sur:rgba(255,255,255,.04);--bor:rgba(255,255,255,.08);
+  --a:#00f5a0;--a2:#00d9f5;--a3:#f500d9;
+  --tx:#e8e8f0;--mu:#6b6b80;--re:#ff6b6b;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:'DM Sans',sans-serif}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--a);border-radius:2px}
+
+/* ════════════════════════════════════════
+   BACKGROUND
+════════════════════════════════════════ */
+.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:floatO var(--d,20s) ease-in-out infinite alternate}
+.o1{width:600px;height:600px;background:var(--a);opacity:.11;top:-200px;left:-200px;--d:18s}
+.o2{width:500px;height:500px;background:var(--a2);opacity:.11;bottom:-100px;right:-100px;--d:22s}
+.o3{width:400px;height:400px;background:var(--a3);opacity:.05;top:40%;left:30%;--d:25s}
+@keyframes floatO{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,30px) scale(1.1)}}
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,245,160,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,245,160,.025) 1px,transparent 1px);
+  background-size:60px 60px}
+.noise{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ════════════════════════════════════════
+   PAGES
+════════════════════════════════════════ */
+.page{display:none;position:relative;z-index:2}
+.page.on{display:block}
+
+/* ════════════════════════════════════════
+   LOADER
+════════════════════════════════════════ */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .4s}
+#loader.gone{opacity:0;pointer-events:none}
+.ld-logo{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--a);letter-spacing:.15em}
+.ld-bar{width:160px;height:2px;background:var(--bor);border-radius:1px;overflow:hidden}
+.ld-fill{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));width:0%;transition:width .35s}
+
+/* ════════════════════════════════════════
+   SHARED COMPONENTS
+════════════════════════════════════════ */
+.glass{background:var(--sur);border:1px solid var(--bor);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px;width:100%}
+.sec{padding:88px 24px}
+.sec-lbl{font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--a);display:block;margin-bottom:8px}
+.sec-h2{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;margin-bottom:48px}
+.sec-h2 em{color:var(--a);font-style:normal}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bor),transparent);margin-bottom:68px}
+.tag{font-family:'Space Mono',monospace;font-size:.6rem;padding:3px 9px;border-radius:4px;background:rgba(0,245,160,.07);border:1px solid rgba(0,245,160,.18);color:var(--a)}
+.ilink{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--bor);color:var(--mu);font-family:'Space Mono',monospace;font-size:.56rem;transition:all .3s}
+.ilink:hover{border-color:var(--a);color:var(--a);background:rgba(0,245,160,.08);transform:translateY(-3px)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:8px;font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:all .2s;padding:11px 22px;cursor:pointer}
+.bp{background:linear-gradient(135deg,var(--a),var(--a2));color:#000;font-weight:700}
+.bp:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,245,160,.35)}
+.bp:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.bg_{background:transparent;color:var(--a);border:1px solid var(--a)}
+.bg_:hover{background:rgba(0,245,160,.08);box-shadow:0 0 18px rgba(0,245,160,.18)}
+.bd{background:transparent;color:var(--re);border:1px solid rgba(255,107,107,.35);font-size:.66rem;padding:6px 12px}
+.bd:hover{background:rgba(255,107,107,.1)}
+.bsm{padding:7px 14px;font-size:.66rem}
+
+/* Inputs */
+.inp{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--tx);border-radius:8px;padding:11px 14px;font-size:.88rem;outline:none;transition:border-color .3s,box-shadow .3s}
+.inp:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(0,245,160,.1)}
+.inp::placeholder{color:var(--mu)}
+.inp option{background:#1a1a26}
+.lbl{display:block;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.frow{margin-bottom:14px}
+
+/* Toggle */
+.tog{position:relative;width:38px;height:21px;background:var(--bor);border-radius:11px;border:none;flex-shrink:0;outline:none;transition:background .3s}
+.tog.on{background:var(--a)}
+.tog::after{content:'';position:absolute;top:2.5px;left:2.5px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .3s}
+.tog.on::after{transform:translateX(17px)}
+
+/* Spinner */
+.spin{width:15px;height:15px;border:2px solid rgba(0,245,160,.2);border-top-color:var(--a);border-radius:50%;animation:rot .8s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* Alerts */
+.err-b{padding:9px 13px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:8px;color:var(--re);font-family:'Space Mono',monospace;font-size:.68rem;margin-bottom:14px}
+.ok-b{padding:12px;background:rgba(0,245,160,.08);border:1px solid rgba(0,245,160,.25);border-radius:8px;color:var(--a);font-family:'Space Mono',monospace;font-size:.76rem;text-align:center}
+
+/* Scan line */
+.scan{position:relative;overflow:hidden}
+.scan::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent);animation:scanA 3s linear infinite;opacity:.2}
+@keyframes scanA{0%{top:-5%}100%{top:105%}}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.afu{animation:fadeUp .6s ease forwards}
+.d1{animation-delay:.1s;opacity:0}.d2{animation-delay:.2s;opacity:0}
+.d3{animation-delay:.3s;opacity:0}.d4{animation-delay:.4s;opacity:0}
+.d5{animation-delay:.5s;opacity:0}.d6{animation-delay:.6s;opacity:0}
+
+/* ════════════════════════════════════════
+   NAVBAR
+════════════════════════════════════════ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:all .3s}
+#nav.stuck{background:rgba(5,5,8,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--bor)}
+.nav-in{max-width:1000px;margin:0 auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--a);letter-spacing:.1em;cursor:pointer}
+.nav-logo span{color:var(--a2)}
+.nav-ls{display:flex;gap:26px}
+.nav-a{position:relative;color:var(--mu);font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.15em;text-transform:uppercase;background:none;border:none;padding:0;transition:color .3s}
+.nav-a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--a);transition:width .3s}
+.nav-a:hover{color:var(--a)}
+.nav-a:hover::after{width:100%}
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 24px 60px}
+.hero-g{display:grid;grid-template-columns:1fr 325px;gap:52px;align-items:center}
+.htitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,7vw,6.2rem);line-height:.94;margin-bottom:20px}
+.ht1{display:block}
+.ht2{display:block;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.typer{font-family:'Space Mono',monospace;font-size:.88rem;color:var(--a2);display:block;margin-bottom:16px;min-height:22px}
+.typer::after{content:'_';animation:blink 1s step-end infinite;color:var(--a)}
+.hbio{color:var(--mu);line-height:1.75;max-width:450px;margin-bottom:30px;font-size:.9rem}
+.hbtns{display:flex;gap:12px;margin-bottom:44px;flex-wrap:wrap}
+.stats{display:flex;gap:36px;flex-wrap:wrap}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;line-height:1;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-l{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--mu);letter-spacing:.15em;text-transform:uppercase;margin-top:3px}
+
+/* Profile card */
+.pcard{border-radius:22px;padding:26px;position:relative;overflow:hidden;transition:transform .15s}
+.pcard::before{content:'';position:absolute;top:0;right:0;width:65px;height:65px;background:linear-gradient(135deg,var(--a),transparent);opacity:.13;border-radius:0 22px 0 65px}
+.pav{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.7rem;color:#000;margin-bottom:18px;overflow:hidden}
+.pav img{width:100%;height:100%;object-fit:cover}
+.pname{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.05em;margin-bottom:3px}
+.pem{font-family:'Space Mono',monospace;font-size:.64rem;color:var(--mu);margin-bottom:18px}
+.prow{display:flex;gap:8px;align-items:center;margin-bottom:10px;color:var(--mu);font-size:.78rem}
+.pdiv{height:1px;background:var(--bor);margin:16px 0}
+.plnks{display:flex;gap:7px;flex-wrap:wrap}
+
+/* ════════════════════════════════════════
+   SKILLS
+════════════════════════════════════════ */
+.sk-g{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.sk-sub{font-family:'Space Mono',monospace;font-size:.66rem;color:var(--a2);letter-spacing:.2em;margin-bottom:20px}
+.sk-item{margin-bottom:20px}
+.sk-r{display:flex;justify-content:space-between;margin-bottom:7px}
+.sk-nm{font-size:.82rem}
+.sk-pc{font-family:'Space Mono',monospace;font-size:.66rem;color:var(--a)}
+.sk-tr{height:2px;background:var(--bor);border-radius:1px}
+.sk-fl{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:1px;width:0%;transition:width 1.2s ease}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ════════════════════════════════════════
+   EXPERIENCE
+════════════════════════════════════════ */
+.tl{position:relative;padding-left:26px}
+.tl-ln{position:absolute;left:0;top:8px;bottom:0;width:1px;background:linear-gradient(180deg,var(--a),transparent)}
+.tl-it{margin-bottom:36px;position:relative}
+.tl-dot{position:absolute;left:-32px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--bor);border:2px solid var(--bor)}
+.tl-dot.now{background:var(--a);box-shadow:0 0 12px var(--a)}
+.ec{border-radius:14px;padding:22px;transition:border-color .3s}
+.ec:hover{border-color:rgba(0,245,160,.3)}
+.ec-hd{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.ec-role{font-family:'Bebas Neue',sans-serif;font-size:1.18rem;letter-spacing:.05em}
+.ec-co{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--a);margin-top:2px}
+.ec-per{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);white-space:nowrap}
+.ec-desc{color:var(--mu);font-size:.82rem;line-height:1.65;margin-top:10px}
+
+/* ════════════════════════════════════════
+   PROJECTS
+════════════════════════════════════════ */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pc{border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .3s ease,box-shadow .3s ease}
+.pc:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 28px 56px rgba(0,0,0,.5),0 0 28px rgba(0,245,160,.08)}
+.pt{height:188px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(0,245,160,.05),rgba(0,217,245,.08));display:flex;align-items:center;justify-content:center}
+.pt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pt-txt{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:rgba(255,255,255,.05);letter-spacing:.1em;position:relative;z-index:1}
+.pt::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,20,.85),transparent)}
+.pt-ft{position:absolute;bottom:12px;left:13px;right:13px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+.pb_{font-family:'Space Mono',monospace;font-size:.57rem;padding:3px 8px;border-radius:4px;background:rgba(0,245,160,.12);border:1px solid rgba(0,245,160,.3);color:var(--a)}
+.pb_.beta{background:rgba(0,217,245,.12);border-color:rgba(0,217,245,.3);color:var(--a2)}
+.ph{font-family:'Space Mono',monospace;font-size:.54rem;color:rgba(255,255,255,.25)}
+.pbd{padding:17px 19px 19px}
+.psub{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);letter-spacing:.15em;margin-bottom:5px;text-transform:uppercase}
+.ptit{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.05em;margin-bottom:8px}
+.pdesc{color:var(--mu);font-size:.77rem;line-height:1.6;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ptags{display:flex;flex-wrap:wrap;gap:5px}
+
+/* Overlay */
+.ov-bg{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;backdrop-filter:blur(12px);cursor:pointer}
+.ov-pn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:92%;max-width:840px;max-height:90vh;overflow-y:auto;border-radius:22px;overflow:hidden;border:1px solid rgba(0,245,160,.2)}
+.ov-img{height:250px;background:linear-gradient(135deg,rgba(0,245,160,.07),rgba(0,217,245,.07));position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--bor)}
+.ov-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ov-ph{text-align:center}
+.ov-ph-t{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(0,245,160,.09);letter-spacing:.1em}
+.ov-ph-h{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);letter-spacing:.2em;margin-top:8px}
+.ov-cls{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid var(--bor);color:var(--mu);font-size:1rem;display:flex;align-items:center;justify-content:center;z-index:2;transition:all .2s;cursor:pointer}
+.ov-cls:hover{border-color:var(--a);color:var(--a)}
+.ov-st{position:absolute;top:14px;left:14px;font-family:'Space Mono',monospace;font-size:.6rem;padding:3px 9px;border-radius:4px;background:rgba(0,245,160,.14);border:1px solid rgba(0,245,160,.4);color:var(--a);z-index:2}
+.ov-st.beta{background:rgba(0,217,245,.14);border-color:rgba(0,217,245,.4);color:var(--a2)}
+.ov-bd{padding:26px 30px}
+.ov-sub{font-family:'Space Mono',monospace;font-size:.64rem;color:var(--mu);letter-spacing:.15em;margin-bottom:5px}
+.ov-ttl{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;margin-bottom:14px}
+.ov-dsc{color:var(--mu);line-height:1.7;font-size:.86rem;margin-bottom:22px}
+.ov-sl{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);letter-spacing:.2em;margin-bottom:9px}
+.ov-tgs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px}
+
+/* ════════════════════════════════════════
+   CONTACT
+════════════════════════════════════════ */
+.ct-cx{max-width:620px;margin:0 auto;text-align:center}
+.ct-fm{border-radius:20px;padding:34px;text-align:left}
+.ct-g{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.ct-ft{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:34px}
+.ci-l{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--mu);letter-spacing:.15em;margin-bottom:4px}
+.ci-v{font-family:'Space Mono',monospace;font-size:.76rem;color:var(--a)}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+#ft{border-top:1px solid var(--bor)}
+.ft-in{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:26px 24px;flex-wrap:wrap}
+.ft-lg{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--mu);letter-spacing:.1em}
+.ft-lg span{color:var(--a)}
+.ft-cp{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);letter-spacing:.1em}
+.ft-ls{display:flex;gap:7px}
+
+/* ════════════════════════════════════════
+   ADMIN PAGE
+════════════════════════════════════════ */
+#pg-admin{min-height:100vh}
+
+/* top bar */
+.ab{background:rgba(5,5,8,.96);border-bottom:1px solid var(--bor);padding:13px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);flex-wrap:wrap;gap:10px}
+.ab-l{display:flex;align-items:center;gap:14px}
+.ab-ttl{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--a);letter-spacing:.08em}
+
+/* status badge */
+.ab-pill{font-family:'Space Mono',monospace;font-size:.62rem;padding:3px 10px;border-radius:4px;display:none;border:1px solid;transition:all .3s}
+.ab-pill.saving{color:#ffd700;border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.08)}
+.ab-pill.saved{color:var(--a);border-color:rgba(0,245,160,.3);background:rgba(0,245,160,.08)}
+.ab-pill.error{color:var(--re);border-color:rgba(255,107,107,.3);background:rgba(255,107,107,.08)}
+
+.ab-r{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.btn-site{background:transparent;border:1px solid var(--bor);color:var(--mu);padding:8px 14px;border-radius:8px;font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.08em;transition:all .2s}
+.btn-site:hover{border-color:var(--a);color:var(--a)}
+
+/* tabs */
+.tabs-wr{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:26px}
+.tabs-wr::-webkit-scrollbar{display:none}
+.tabs-row{display:flex;gap:3px;background:rgba(255,255,255,.03);border-radius:10px;padding:3px;width:max-content;min-width:100%}
+.tbtn{padding:8px 16px;border-radius:7px;border:none;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--mu);transition:all .2s;white-space:nowrap}
+.tbtn.on{background:var(--a);color:#000;font-weight:700}
+.tp{display:none}
+.tp.on{display:block}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.sub-h{font-family:'Space Mono',monospace;font-size:.66rem;color:var(--a2);letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px}
+
+/* admin cards */
+.sk-ar{display:grid;grid-template-columns:1fr auto auto auto;gap:11px;align-items:center;margin-bottom:10px;padding:13px;border-radius:11px}
+.acard{border-radius:13px;padding:19px;position:relative;margin-bottom:16px}
+.del-abs{position:absolute;top:11px;right:11px}
+.prv-i{width:76px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--bor)}
+.prv-n{width:76px;height:48px;background:var(--sur);border:1px solid var(--bor);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.54rem;color:var(--mu)}
+.urow{display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+
+/* section toggles */
+.stog{border-radius:11px;padding:13px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.stog-ttl{font-size:.86rem;margin-bottom:2px}
+.stog-dsc{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--mu)}
+
+/* diff viewer */
+.diff-wrap{background:rgba(0,0,0,.4);border:1px solid var(--bor);border-radius:10px;padding:16px;margin-top:16px;max-height:220px;overflow-y:auto}
+.diff-note{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);margin-bottom:10px;letter-spacing:.08em}
+.diff-file{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--a2);margin-bottom:6px}
+.diff-line{font-family:'Space Mono',monospace;font-size:.64rem;line-height:1.8;white-space:pre-wrap;word-break:break-all}
+.diff-add{color:#4caf50}
+.diff-rem{color:var(--re)}
+.diff-neu{color:var(--mu)}
+
+.code-b{background:rgba(0,0,0,.3);border-radius:8px;padding:13px;font-family:'Space Mono',monospace;font-size:.66rem;color:var(--a2);border:1px solid var(--bor);overflow:auto;margin-top:12px;white-space:pre}
+
+.bot-bar{display:flex;gap:11px;justify-content:flex-end;margin-top:32px;padding-top:20px;border-top:1px solid var(--bor)}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero-g{grid-template-columns:1fr}
+  #hcard{display:none}
+  .sk-g{grid-template-columns:1fr}
+  .pg{grid-template-columns:1fr}
+  .nav-ls{display:none}
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:580px){
+  .stats{gap:20px}
+  .g3{grid-template-columns:1fr}
+  .hbtns{flex-direction:column}
+  .ct-g{grid-template-columns:1fr}
+  .ft-in{flex-direction:column;align-items:center;text-align:center}
+  .ov-pn{width:96%}
+  .ov-bd{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo">Portfolio</div>
+  <div class="ld-bar"><div class="ld-fill" id="ld-f"></div></div>
+</div>
+
+<!-- BACKGROUND -->
+<div class="bg-fx" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="noise"   aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════
+     PORTFOLIO PAGE
+══════════════════════════════════════ -->
+<div id="pg-port" class="page">
+  <nav id="nav">
+    <div class="nav-in">
+      <div class="nav-logo" id="nav-logo">Alex<span>.</span></div>
+      <div class="nav-ls" id="nav-ls"></div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="wrap">
+      <div class="hero-g">
+        <div>
+          <span class="sec-lbl afu d1" id="h-yr"></span>
+          <h1 class="htitle afu d2"><span class="ht1" id="h-n1">Alex</span><span class="ht2" id="h-n2">Rivera</span></h1>
+          <span class="typer afu d3" id="typer"></span>
+          <p class="hbio afu d4" id="h-bio">Loading...</p>
+          <div class="hbtns afu d5" id="h-btns"></div>
+          <div class="stats afu d6" id="h-stats"></div>
+        </div>
+        <div id="hcard">
+          <div class="glass pcard" id="pcard-el">
+            <div class="pav" id="pav">AR</div>
+            <div class="pname" id="p-name">Alex Rivera</div>
+            <div class="pem"   id="p-em">alex@portfolio.dev</div>
+            <div class="prow">📍 <span id="p-loc">San Francisco, CA</span></div>
+            <div class="prow">✉️ <span id="p-em2">alex@portfolio.dev</span></div>
+            <div class="pdiv"></div>
+            <div class="plnks" id="p-lnks"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="sec-sk" class="sec">
+    <div class="wrap">
+      <div class="divider"></div>
+      <span class="sec-lbl">Expertise</span>
+      <h2 class="sec-h2">Skills &amp; <em>Tools</em></h2>
+      <div class="sk-g">
+        <div><div class="sk-sub">TECHNICAL SKILLS</div><div id="sk-ls"></div></div>
+        <div><div class="sk-sub">TOOLS &amp; TECHNOLOGIES</div><div class="tools" id="tools-ls"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="sec-ex" class="sec">
+    <div class="wrap">
+      <div class="divider"></div>
+      <span class="sec-lbl">Journey</span>
+      <h2 class="sec-h2">Work <em>Experience</em></h2>
+      <div class="tl"><div class="tl-ln"></div><div id="ex-ls"></div></div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="sec-pr" class="sec">
+    <div class="wrap">
+      <div class="divider"></div>
+      <span class="sec-lbl">Work</span>
+      <h2 class="sec-h2">Featured <em>Projects</em></h2>
+      <div class="pg" id="pr-gr"></div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="sec-ct" class="sec">
+    <div class="wrap">
+      <div class="divider"></div>
+      <div class="ct-cx">
+        <span class="sec-lbl">Get In Touch</span>
+        <h2 class="sec-h2" style="margin-bottom:14px">Let's Build <em>Together</em></h2>
+        <p style="color:var(--mu);line-height:1.75;margin-bottom:40px;font-size:.9rem">Have a project in mind? I'd love to hear from you.</p>
+        <div class="glass ct-fm">
+          <div class="ct-g">
+            <div><label class="lbl">Name</label><input class="inp" id="c-nm" placeholder="Your name"/></div>
+            <div><label class="lbl">Email</label><input class="inp" type="email" id="c-em" placeholder="your@email.com"/></div>
+          </div>
+          <div class="frow"><label class="lbl">Message</label><textarea class="inp" id="c-ms" rows="5" placeholder="Tell me about your project..." style="resize:vertical"></textarea></div>
+          <div id="c-err" class="err-b" style="display:none"></div>
+          <div id="c-ok"  class="ok-b"  style="display:none">✓ Message sent!</div>
+          <button class="btn bp" id="c-sb" onclick="ctSubmit()" style="width:100%;justify-content:center">Send Message →</button>
+        </div>
+        <div class="ct-ft">
+          <div><div class="ci-l">✉ EMAIL</div><div class="ci-v" id="ci-em">—</div></div>
+          <div><div class="ci-l">📍 LOCATION</div><div class="ci-v" id="ci-loc">—</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="ft">
+    <div class="wrap">
+      <div class="ft-in">
+        <div class="ft-lg"><span id="ft-nm">Alex</span><span>.</span></div>
+        <div class="ft-cp">© <span id="ft-yr"></span> — Built with precision</div>
+        <div class="ft-ls" id="ft-ls"></div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Project Overlay -->
+<div id="ov-bg"  class="ov-bg"   style="display:none" onclick="closeOv()"></div>
+<div id="ov-pn"  class="ov-pn glass" style="display:none">
+  <div class="scan ov-img" id="ov-im">
+    <div id="ov-ph"><div class="ov-ph-t" id="ov-ph-t"></div><div class="ov-ph-h">NO SCREENSHOT — ADD IN ADMIN</div></div>
+    <button class="ov-cls" onclick="closeOv()">×</button>
+    <div class="ov-st" id="ov-st">● LIVE</div>
+  </div>
+  <div class="ov-bd">
+    <div class="ov-sub" id="ov-sub"></div>
+    <div class="ov-ttl" id="ov-ttl"></div>
+    <div class="ov-dsc" id="ov-dsc"></div>
+    <div class="ov-sl">TECH STACK</div>
+    <div class="ov-tgs" id="ov-tgs"></div>
+    <div id="ov-ac"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN PAGE
+══════════════════════════════════════ -->
+<div id="pg-admin" class="page">
+  <!-- Top bar -->
+  <div class="ab">
+    <div class="ab-l">
+      <div class="ab-ttl">PORTFOLIO EDITOR</div>
+      <div class="ab-pill" id="ab-pill">saving...</div>
+    </div>
+    <div class="ab-r">
+      <button class="btn bp bsm" onclick="adminSave()" id="sv-top">Save &amp; Update File</button>
+      <button class="btn-site" onclick="go('port')">↗ View Portfolio</button>
+    </div>
+  </div>
+
+  <div style="max-width:900px;margin:0 auto;padding:28px 20px">
+    <!-- Tabs -->
+    <div class="tabs-wr">
+      <div class="tabs-row">
+        <button class="tbtn on" onclick="tab('profile')">Profile</button>
+        <button class="tbtn"    onclick="tab('links')">Links</button>
+        <button class="tbtn"    onclick="tab('skills')">Skills</button>
+        <button class="tbtn"    onclick="tab('exp')">Experience</button>
+        <button class="tbtn"    onclick="tab('proj')">Projects</button>
+        <button class="tbtn"    onclick="tab('sections')">Sections</button>
+        <button class="tbtn"    onclick="tab('settings')">Settings</button>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="tp on" id="tp-profile">
+      <div class="g2 frow">
+        <div><label class="lbl">Full Name</label><input class="inp" id="a-name"/></div>
+        <div><label class="lbl">Role / Title</label><input class="inp" id="a-role"/></div>
+      </div>
+      <div class="frow"><label class="lbl">Bio</label><textarea class="inp" id="a-bio" rows="3" style="resize:vertical"></textarea></div>
+      <div class="g2 frow">
+        <div><label class="lbl">Email</label><input class="inp" id="a-email" type="email"/></div>
+        <div><label class="lbl">Location</label><input class="inp" id="a-loc"/></div>
+      </div>
+      <!-- Profile picture -->
+      <div class="frow">
+        <label class="lbl">Profile Picture</label>
+        <div class="urow">
+          <div id="pp-prv"></div>
+          <label style="cursor:pointer"><span class="btn bg_ bsm">Upload Photo</span><input type="file" accept="image/*" style="display:none" onchange="upPP(this)"/></label>
+          <button class="btn bd bsm" id="pp-rm" onclick="rmPP()" style="display:none">Remove</button>
+        </div>
+      </div>
+      <!-- CV -->
+      <div class="frow">
+        <label class="lbl">CV / Resume</label>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="urow">
+            <span id="cv-st" style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--mu)">No CV set</span>
+            <label style="cursor:pointer"><span class="btn bg_ bsm">Upload PDF</span><input type="file" accept=".pdf,.doc,.docx" style="display:none" onchange="upCV(this)"/></label>
+            <button class="btn bd bsm" id="cv-rm" onclick="rmCV()" style="display:none">Remove</button>
+          </div>
+          <div><label class="lbl">Or paste a direct URL</label><input class="inp" id="a-cvurl" placeholder="https://..."/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LINKS ── -->
+    <div class="tp" id="tp-links">
+      <div class="sub-h">Social Links</div>
+      <div class="frow"><label class="lbl">GitHub URL</label><input class="inp" id="a-gh" placeholder="https://github.com/username"/></div>
+      <div class="frow"><label class="lbl">LinkedIn URL</label><input class="inp" id="a-li" placeholder="https://linkedin.com/in/username"/></div>
+      <p style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu)">Toggle link visibility in the <strong style="color:var(--a)">Sections</strong> tab.</p>
+    </div>
+
+    <!-- ── SKILLS ── -->
+    <div class="tp" id="tp-skills">
+      <div class="sub-h">Skill Levels</div>
+      <div id="sk-adm"></div>
+      <button class="btn bg_ bsm" onclick="addSkill()" style="margin-bottom:24px">+ Add Skill</button>
+      <div class="divider" style="margin:4px 0 16px"></div>
+      <div class="sub-h">Tools &amp; Technologies</div>
+      <div class="frow"><label class="lbl">Comma separated</label><textarea class="inp" id="a-tools" rows="3" style="resize:vertical"></textarea></div>
+    </div>
+
+    <!-- ── EXPERIENCE ── -->
+    <div class="tp" id="tp-exp">
+      <div id="ex-adm"></div>
+      <button class="btn bg_ bsm" onclick="addExp()">+ Add Experience</button>
+    </div>
+
+    <!-- ── PROJECTS ── -->
+    <div class="tp" id="tp-proj">
+      <div id="pr-adm"></div>
+      <button class="btn bg_ bsm" onclick="addProj()">+ Add Project</button>
+    </div>
+
+    <!-- ── SECTIONS ── -->
+    <div class="tp" id="tp-sections">
+      <div class="sub-h">Show / Hide Sections &amp; Features</div>
+      <div id="sec-togs"></div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="tp" id="tp-settings">
+      <div class="sub-h">How This Works</div>
+      <div class="glass" style="border-radius:13px;padding:20px;margin-bottom:20px">
+        <p style="color:var(--mu);font-size:.84rem;line-height:1.7;margin-bottom:14px">
+          This admin panel runs locally. When you click <strong style="color:var(--a)">Save &amp; Update File</strong>, two things happen:
+        </p>
+        <ol style="color:var(--mu);font-size:.84rem;line-height:2;padding-left:20px">
+          <li>The server rewrites <code style="color:var(--a);font-family:'Space Mono',monospace">data.js</code> with your changes</li>
+          <li>It also writes <code style="color:var(--a);font-family:'Space Mono',monospace">public/data.json</code> which the portfolio reads</li>
+        </ol>
+        <p style="color:var(--mu);font-size:.84rem;line-height:1.7;margin-top:14px">
+          To deploy: just <code style="color:var(--a);font-family:'Space Mono',monospace">git add . &amp;&amp; git commit -m "update" &amp;&amp; git push</code> — Vercel picks it up instantly.
+        </p>
+      </div>
+
+      <div class="sub-h">Contact Form Webhook</div>
+      <div class="glass" style="border-radius:13px;padding:20px;margin-bottom:20px">
+        <p style="color:var(--mu);font-size:.84rem;line-height:1.65;margin-bottom:16px">On production (Vercel), the contact form can POST to a webhook URL. Set it here:</p>
+        <div class="frow"><label class="lbl">Webhook URL</label><input class="inp" id="a-wh" placeholder="https://your-webhook.com/endpoint"/></div>
+        <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);margin-top:10px;margin-bottom:6px">PAYLOAD SENT:</div>
+        <div class="code-b">{
+  "name":            "Visitor Name",
+  "email":           "visitor@email.com",
+  "message":         "Their message",
+  "timestamp":       "2025-01-01T12:00:00.000Z",
+  "portfolio_owner": "Your Name"
+}</div>
+      </div>
+
+      <div class="sub-h">Admin Access</div>
+      <div class="glass" style="border-radius:13px;padding:20px">
+        <p style="color:var(--mu);font-size:.84rem;line-height:1.65">Admin is at <span style="color:var(--a);font-family:'Space Mono',monospace">localhost:3000/#admin</span> — only works locally. The <code style="color:var(--a);font-family:'Space Mono',monospace">server.js</code> and write endpoints are never on Vercel, so your admin is fully private.</p>
+        <div style="margin-top:12px;font-family:'Space Mono',monospace;font-size:.64rem;color:var(--mu)">Password set in <span style="color:var(--a)">server.js</span> → <span style="color:var(--a)">ADMIN_PASS</span> constant</div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bot-bar">
+      <button class="btn bp" onclick="adminSave()" id="sv-bot">Save &amp; Update File</button>
+      <button class="btn bg_" onclick="go('port')">View Portfolio</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div id="login-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);align-items:center;justify-content:center">
+  <div style="width:100%;max-width:360px;margin:24px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--a);letter-spacing:.1em;text-shadow:0 0 32px rgba(0,245,160,.3)">ADMIN</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);letter-spacing:.2em;margin-top:4px">LOCAL PORTFOLIO EDITOR</div>
+    </div>
+    <div class="glass" style="border-radius:20px;padding:28px;border:1px solid rgba(0,245,160,.14)">
+      <div class="frow"><label class="lbl">Password</label><input class="inp" type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div id="l-err" class="err-b" style="display:none"></div>
+      <button class="btn bp" onclick="doLogin()" id="l-btn" style="width:100%;justify-content:center">ENTER →</button>
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:var(--mu);text-align:center;margin-top:12px">Default password: <span style="color:var(--a)">admin123</span></div>
+    </div>
+    <button onclick="closeLogin()" style="display:block;margin:16px auto 0;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--mu);background:none;border:none;letter-spacing:.1em;transition:color .2s" onmouseover="this.style.color='var(--a)'" onmouseout="this.style.color='var(--mu)'">← Back to Portfolio</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ────────────────────────────────────────
+   CONFIG
+──────────────────────────────────────── */
+const ADMIN_PASS = 'admin123'; // change this in server.js too
+const IS_LOCAL   = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+/* ────────────────────────────────────────
+   STATE
+──────────────────────────────────────── */
+let D  = {};   // live data
+let AD = {};   // admin working copy
+let authed = sessionStorage.getItem('adm') === '1';
+let twTimer = null;
+
+/* ────────────────────────────────────────
+   BOOT
+──────────────────────────────────────── */
+(async function boot() {
+  setY();
+  animLD();
+  await loadData();
+  await delay(350);
+  document.getElementById('loader').classList.add('gone');
+  setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+  routeHash();
+  window.addEventListener('hashchange', routeHash);
+  window.addEventListener('scroll', () =>
+    document.getElementById('nav').classList.toggle('stuck', scrollY > 50));
+  setupTilt();
+})();
+
+function animLD() {
+  let p = 0;
+  const t = setInterval(() => {
+    p = Math.min(p + 20, 85);
+    document.getElementById('ld-f').style.width = p + '%';
+    if (p >= 85) clearInterval(t);
+  }, 100);
+}
+
+async function loadData() {
+  try {
+    // Local dev: read from Express API
+    if (IS_LOCAL) {
+      const r = await fetch('/api/data');
+      const j = await r.json();
+      if (j.ok) { D = j.data; return; }
+    }
+    // Production (Vercel): read from static data.json
+    const r = await fetch('/data.json');
+    D = await r.json();
+  } catch(e) {
+    console.warn('Could not load data.json, using embedded defaults');
+    D = embeddedDefaults();
+  }
+  document.getElementById('ld-f').style.width = '100%';
+}
+
+/* ────────────────────────────────────────
+   ROUTER
+──────────────────────────────────────── */
+function routeHash() {
+  const h = location.hash || '#portfolio';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  stopTW();
+
+  if (h === '#admin') {
+    if (!IS_LOCAL) { alert('Admin is only available locally.\nDeploy is done via git push.'); location.hash = '#portfolio'; return; }
+    if (!authed) { showLogin(); return; }
+    document.getElementById('pg-admin').classList.add('on');
+    populateAdmin();
+  } else {
+    document.getElementById('pg-port').classList.add('on');
+    renderPort();
+  }
+}
+
+function go(page) { location.hash = page === 'admin' ? '#admin' : '#portfolio'; }
+
+/* ────────────────────────────────────────
+   AUTH (local password)
+──────────────────────────────────────── */
+function showLogin() {
+  const m = document.getElementById('login-modal');
+  m.style.display = 'flex';
+  document.getElementById('pg-port').classList.add('on');
+}
+function closeLogin() {
+  document.getElementById('login-modal').style.display = 'none';
+  location.hash = '#portfolio';
+}
+function doLogin() {
+  const pass = document.getElementById('lp').value;
+  const err  = document.getElementById('l-err');
+  err.style.display = 'none';
+  if (pass === ADMIN_PASS) {
+    authed = true;
+    sessionStorage.setItem('adm', '1');
+    document.getElementById('login-modal').style.display = 'none';
+    document.getElementById('pg-port').classList.remove('on');
+    document.getElementById('pg-admin').classList.add('on');
+    populateAdmin();
+  } else {
+    err.textContent = 'Wrong password.';
+    err.style.display = '';
+    document.getElementById('lp').value = '';
+  }
+}
+
+/* ────────────────────────────────────────
+   RENDER PORTFOLIO
+──────────────────────────────────────── */
+function renderPort() {
+  const d = D, s = d.sections || {};
+  const pts = (d.name || 'Alex Rivera').split(' ');
+
+  document.getElementById('pg-title').textContent = d.name || 'Portfolio';
+
+  // Nav
+  document.getElementById('nav-logo').innerHTML = `${x(pts[0])}<span>.</span>`;
+  document.getElementById('nav-logo').onclick = () => ss('#hero');
+  const nl = document.getElementById('nav-ls'); nl.innerHTML = '';
+  [ [s.hero!==false,'#hero','About'],
+    [s.skills!==false,'#sec-sk','Skills'],
+    [s.experience!==false,'#sec-ex','Experience'],
+    [s.projects!==false,'#sec-pr','Projects'],
+    [s.contact!==false,'#sec-ct','Contact']
+  ].forEach(([show,href,label]) => {
+    if(!show) return;
+    const b = mk('button','nav-a'); b.textContent = label;
+    b.onclick = () => ss(href); nl.appendChild(b);
+  });
+
+  // Hero
+  sv('sec-sk',  s.skills!==false);
+  sv('sec-ex',  s.experience!==false);
+  sv('sec-pr',  s.projects!==false);
+  sv('sec-ct',  s.contact!==false);
+  document.getElementById('h-n1').textContent = pts[0]||'';
+  document.getElementById('h-n2').textContent = pts.slice(1).join(' ')||'';
+  document.getElementById('h-bio').textContent = d.bio||'';
+  startTW([d.role||'Developer','Creative Technologist','Problem Solver']);
+
+  const hb = document.getElementById('h-btns'); hb.innerHTML = '';
+  if(s.contact!==false) hb.innerHTML += `<button class="btn bp" onclick="ss('#sec-ct')">Get In Touch</button>`;
+  if(s.projects!==false) hb.innerHTML += `<button class="btn bg_" onclick="ss('#sec-pr')">View Work</button>`;
+  if(s.cv!==false && d.cvUrl) hb.innerHTML += `<a href="${x(d.cvUrl)}" target="_blank" rel="noreferrer"><button class="btn bg_" style="border-color:var(--a2);color:var(--a2)">↓ Download CV</button></a>`;
+
+  const yrs = calcY(d.experience||[]);
+  document.getElementById('h-stats').innerHTML =
+    `<div><div class="stat-n">${yrs}+</div><div class="stat-l">Years Exp.</div></div>
+     <div><div class="stat-n">${(d.projects||[]).length}+</div><div class="stat-l">Projects</div></div>`;
+
+  // Profile card
+  const init = (d.name||'').split(' ').map(n=>n[0]).join('');
+  const av = document.getElementById('pav');
+  if(d.profileImage){ av.innerHTML=`<img src="${d.profileImage}" alt="${x(d.name)}"/>`; av.style.background='none'; }
+  else { av.textContent=init; av.style.background=''; }
+  document.getElementById('p-name').textContent = d.name||'';
+  document.getElementById('p-em').textContent   = d.email||'';
+  document.getElementById('p-loc').textContent  = d.location||'';
+  document.getElementById('p-em2').textContent  = d.email||'';
+  const pl = document.getElementById('p-lnks'); pl.innerHTML='';
+  if(s.github!==false&&d.github) pl.innerHTML+=`<a href="${x(d.github)}" target="_blank" rel="noreferrer" class="ilink">GH</a>`;
+  if(s.linkedin!==false&&d.linkedin) pl.innerHTML+=`<a href="${x(d.linkedin)}" target="_blank" rel="noreferrer" class="ilink">LI</a>`;
+  if(s.cv!==false&&d.cvUrl) pl.innerHTML+=`<a href="${x(d.cvUrl)}" target="_blank" rel="noreferrer" class="ilink">CV</a>`;
+
+  // Skills
+  const sl = document.getElementById('sk-ls'); sl.innerHTML='';
+  (d.skills||[]).forEach(sk=>{
+    const div=mk('div','sk-item');
+    div.innerHTML=`<div class="sk-r"><span class="sk-nm">${x(sk.name)}</span><span class="sk-pc">${sk.level}%</span></div>
+      <div class="sk-tr"><div class="sk-fl" data-lv="${sk.level}"></div></div>`;
+    sl.appendChild(div);
+  });
+  const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting){e.target.style.width=e.target.dataset.lv+'%';obs.unobserve(e.target);}});},{threshold:.5});
+  document.querySelectorAll('.sk-fl').forEach(f=>obs.observe(f));
+  document.getElementById('tools-ls').innerHTML=(d.tools||[]).map(t=>`<span class="tag">${x(t)}</span>`).join('');
+
+  // Experience
+  const el=document.getElementById('ex-ls'); el.innerHTML='';
+  (d.experience||[]).forEach((e,i)=>{
+    const div=mk('div','tl-it');
+    div.innerHTML=`<div class="tl-dot ${i===0?'now':''}"></div>
+      <div class="glass ec" onmouseenter="this.style.borderColor='rgba(0,245,160,.3)'" onmouseleave="this.style.borderColor='var(--bor)'">
+        <div class="ec-hd"><div><div class="ec-role">${x(e.role)}</div><div class="ec-co">${x(e.company)}</div></div><div class="ec-per">${x(e.period)}</div></div>
+        <div class="ec-desc">${x(e.desc)}</div>
+      </div>`;
+    el.appendChild(div);
+  });
+
+  // Projects
+  const pg=document.getElementById('pr-gr'); pg.innerHTML='';
+  (d.projects||[]).forEach(p=>{
+    const live=p.status==='Live';
+    const tags=(p.tech||[]).slice(0,3).map(t=>`<span class="tag" style="font-size:.57rem">${x(t)}</span>`).join('');
+    const more=(p.tech||[]).length>3?`<span class="tag" style="font-size:.57rem">+${p.tech.length-3}</span>`:'';
+    const thumb=p.image?`<img src="${x(p.image)}" alt="${x(p.title)}" />`:`<div class="pt-txt">${x(p.title)}</div>`;
+    const card=mk('div','glass pc scan');
+    card.innerHTML=`
+      <div class="pt">${thumb}
+        <div class="pt-ft">
+          <span class="pb_ ${live?'':'beta'}">${live?'● LIVE':'◐ '+(p.status||'BETA')}</span>
+          <span class="ph">CLICK TO EXPAND ↗</span>
+        </div>
+      </div>
+      <div class="pbd">
+        <div class="psub">${x(p.subtitle||'')}</div>
+        <div class="ptit">${x(p.title)}</div>
+        <div class="pdesc">${x(p.description||'')}</div>
+        <div class="ptags">${tags}${more}</div>
+      </div>`;
+    card.onclick=()=>openOv(p);
+    pg.appendChild(card);
+  });
+
+  document.getElementById('ci-em').textContent  = d.email||'—';
+  document.getElementById('ci-loc').textContent = d.location||'—';
+  document.getElementById('ft-nm').textContent  = pts[0]||'';
+  const fl=document.getElementById('ft-ls'); fl.innerHTML='';
+  if(s.github!==false&&d.github) fl.innerHTML+=`<a href="${x(d.github)}" target="_blank" rel="noreferrer" class="ilink">GH</a>`;
+  if(s.linkedin!==false&&d.linkedin) fl.innerHTML+=`<a href="${x(d.linkedin)}" target="_blank" rel="noreferrer" class="ilink">LI</a>`;
+}
+
+/* ────────────────────────────────────────
+   TYPEWRITER
+──────────────────────────────────────── */
+let twR=[],twI=0,twC=0,twD=false;
+function startTW(r){twR=r;twI=0;twC=0;twD=false;twStep();}
+function stopTW(){clearTimeout(twTimer);const e=document.getElementById('typer');if(e)e.textContent='';}
+function twStep(){
+  const e=document.getElementById('typer'); if(!e||!twR.length) return;
+  const c=twR[twI];
+  if(!twD){if(twC<c.length){e.textContent=c.slice(0,++twC);twTimer=setTimeout(twStep,80);}else twTimer=setTimeout(()=>{twD=true;twStep();},2000);}
+  else{if(twC>0){e.textContent=c.slice(0,--twC);twTimer=setTimeout(twStep,40);}else{twD=false;twI=(twI+1)%twR.length;twTimer=setTimeout(twStep,200);}}
+}
+
+/* ────────────────────────────────────────
+   PROJECT OVERLAY
+──────────────────────────────────────── */
+function openOv(p){
+  document.body.style.overflow='hidden';
+  const bg=document.getElementById('ov-bg'),pn=document.getElementById('ov-pn');
+  const iw=document.getElementById('ov-im'),ph=document.getElementById('ov-ph');
+  iw.querySelectorAll('img').forEach(e=>e.remove());
+  if(p.image){ph.style.display='none';const img=document.createElement('img');img.src=p.image;img.alt=p.title;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover';iw.insertBefore(img,iw.firstChild);}
+  else{ph.style.display='';document.getElementById('ov-ph-t').textContent=p.title;}
+  const st=document.getElementById('ov-st');
+  st.textContent=p.status==='Live'?'● LIVE':'◐ '+(p.status||'BETA');
+  st.className='ov-st'+(p.status!=='Live'?' beta':'');
+  document.getElementById('ov-sub').textContent=(p.subtitle||'').toUpperCase();
+  document.getElementById('ov-ttl').textContent=p.title;
+  document.getElementById('ov-dsc').textContent=p.description||'';
+  document.getElementById('ov-tgs').innerHTML=(p.tech||[]).map(t=>`<span class="tag">${x(t)}</span>`).join('');
+  const ac=document.getElementById('ov-ac');ac.innerHTML='';
+  if(p.showGithub&&p.github&&p.github!=='#')ac.innerHTML=`<a href="${x(p.github)}" target="_blank" rel="noreferrer"><button class="btn bg_">View on GitHub ↗</button></a>`;
+  bg.style.display='';pn.style.display='';
+  window.addEventListener('keydown',escOv);
+}
+function closeOv(){document.getElementById('ov-bg').style.display='none';document.getElementById('ov-pn').style.display='none';document.body.style.overflow='';window.removeEventListener('keydown',escOv);}
+function escOv(e){if(e.key==='Escape')closeOv();}
+
+/* ────────────────────────────────────────
+   CONTACT
+──────────────────────────────────────── */
+async function ctSubmit(){
+  const nm=gv('c-nm'),em=gv('c-em'),ms=gv('c-ms');
+  const er=document.getElementById('c-err'),ok=document.getElementById('c-ok'),btn=document.getElementById('c-sb');
+  er.style.display='none';ok.style.display='none';
+  if(!nm||!em||!ms){er.textContent='Please fill in all fields.';er.style.display='';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Sending...';
+  try{
+    if(IS_LOCAL){
+      const r=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,message:ms})});
+      const j=await r.json();
+      if(!r.ok){er.textContent=j.error||'Error';er.style.display='';btn.disabled=false;btn.innerHTML='Send Message →';return;}
+    } else if(D.webhookUrl){
+      await fetch(D.webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,message:ms,timestamp:new Date().toISOString(),portfolio_owner:D.name})}).catch(()=>{});
+    }
+    ok.style.display='';
+    ['c-nm','c-em','c-ms'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+    setTimeout(()=>ok.style.display='none',5000);
+  }catch{er.textContent='Network error.';er.style.display='';}
+  btn.disabled=false;btn.innerHTML='Send Message →';
+}
+
+/* ────────────────────────────────────────
+   CARD TILT
+──────────────────────────────────────── */
+function setupTilt(){
+  const c=document.getElementById('pcard-el'); if(!c) return;
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    const rx=((e.clientY-r.top-r.height/2)/r.height)*-8;
+    const ry=((e.clientX-r.left-r.width/2)/r.width)*8;
+    c.style.transform=`perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(10px)`;
+  });
+  c.addEventListener('mouseleave',()=>c.style.transform='');
+}
+
+/* ────────────────────────────────────────
+   ADMIN — POPULATE
+──────────────────────────────────────── */
+function populateAdmin(){
+  AD = JSON.parse(JSON.stringify(D));
+  const d=AD;
+  siv('a-name',d.name); siv('a-role',d.role); siv('a-bio',d.bio);
+  siv('a-email',d.email); siv('a-loc',d.location);
+  siv('a-gh',d.github); siv('a-li',d.linkedin);
+  siv('a-cvurl',d.cvUrl||''); siv('a-wh',d.webhookUrl||'');
+  siv('a-tools',(d.tools||[]).join(', '));
+  renderPP(d.profileImage); renderCVSt(d.cvUrl||'');
+  renderSkAdm(); renderExAdm(); renderPrAdm(); renderSecAdm();
+}
+
+/* ── Profile image ── */
+function upPP(inp){const f=inp.files[0];if(!f)return;b64(f,v=>{AD.profileImage=v;renderPP(v);});}
+function rmPP(){AD.profileImage=null;renderPP(null);}
+function renderPP(src){
+  const p=document.getElementById('pp-prv'),r=document.getElementById('pp-rm');
+  if(src){p.innerHTML=`<img src="${src}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--a)"/>`;r.style.display='';}
+  else{p.innerHTML=`<div class="prv-n" style="width:60px;height:60px;border-radius:50%">NONE</div>`;r.style.display='none';}
+}
+
+/* ── CV ── */
+function upCV(inp){const f=inp.files[0];if(!f)return;b64(f,v=>{AD.cvUrl=v;siv('a-cvurl','');renderCVSt(v);});}
+function rmCV(){AD.cvUrl='';siv('a-cvurl','');renderCVSt('');}
+function renderCVSt(url){
+  const s=document.getElementById('cv-st'),r=document.getElementById('cv-rm');
+  if(url){s.innerHTML=`<span style="color:var(--a)">✓ CV Set</span>`;r.style.display='';}
+  else{s.innerHTML=`<span style="color:var(--mu)">No CV set</span>`;r.style.display='none';}
+}
+
+/* ── Skills ── */
+function renderSkAdm(){
+  const list=document.getElementById('sk-adm');list.innerHTML='';
+  (AD.skills||[]).forEach((sk,i)=>{
+    const row=mk('div','glass sk-ar');
+    row.innerHTML=`
+      <input class="inp" value="${x(sk.name)}" onchange="AD.skills[${i}].name=this.value" placeholder="Skill name"/>
+      <input type="range" min="0" max="100" value="${sk.level}" style="width:100px;accent-color:var(--a)"
+        oninput="AD.skills[${i}].level=+this.value;this.nextElementSibling.textContent=this.value+'%'"/>
+      <span style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--a);width:34px;text-align:right">${sk.level}%</span>
+      <button class="btn bd" onclick="AD.skills.splice(${i},1);renderSkAdm()" style="padding:4px 8px">✕</button>`;
+    list.appendChild(row);
+  });
+}
+function addSkill(){AD.skills=AD.skills||[];AD.skills.push({name:'New Skill',level:70});renderSkAdm();}
+
+/* ── Experience ── */
+function renderExAdm(){
+  const list=document.getElementById('ex-adm');list.innerHTML='';
+  (AD.experience||[]).forEach((e,i)=>{
+    const card=mk('div','glass acard');
+    card.innerHTML=`
+      <button class="btn bd bsm del-abs" onclick="AD.experience.splice(${i},1);renderExAdm()">DEL</button>
+      <div class="g3 frow">
+        <div><label class="lbl">Company</label><input class="inp" value="${x(e.company)}" onchange="AD.experience[${i}].company=this.value"/></div>
+        <div><label class="lbl">Role</label><input class="inp" value="${x(e.role)}" onchange="AD.experience[${i}].role=this.value"/></div>
+        <div><label class="lbl">Period</label><input class="inp" value="${x(e.period)}" onchange="AD.experience[${i}].period=this.value"/></div>
+      </div>
+      <div><label class="lbl">Description</label><textarea class="inp" rows="2" style="resize:vertical" onchange="AD.experience[${i}].desc=this.value">${x(e.desc)}</textarea></div>`;
+    list.appendChild(card);
+  });
+}
+function addExp(){AD.experience=AD.experience||[];AD.experience.push({company:'Company',role:'Role',period:'2024 — Present',desc:'Description.'});renderExAdm();}
+
+/* ── Projects ── */
+function renderPrAdm(){
+  const list=document.getElementById('pr-adm');list.innerHTML='';
+  (AD.projects||[]).forEach((p,i)=>{
+    const card=mk('div','glass acard');
+    const prv=p.image?`<img src="${p.image}" class="prv-i"/>`:`<div class="prv-n">NONE</div>`;
+    const on=p.showGithub?'on':'';
+    card.innerHTML=`
+      <button class="btn bd bsm del-abs" onclick="AD.projects.splice(${i},1);renderPrAdm()">DEL</button>
+      <div class="g3 frow" style="padding-right:60px">
+        <div><label class="lbl">Title</label><input class="inp" value="${x(p.title)}" onchange="AD.projects[${i}].title=this.value"/></div>
+        <div><label class="lbl">Subtitle</label><input class="inp" value="${x(p.subtitle||'')}" onchange="AD.projects[${i}].subtitle=this.value"/></div>
+        <div><label class="lbl">Status</label>
+          <select class="inp" onchange="AD.projects[${i}].status=this.value">
+            <option ${p.status==='Live'?'selected':''}>Live</option>
+            <option ${p.status==='Beta'?'selected':''}>Beta</option>
+            <option ${p.status==='WIP'?'selected':''}>WIP</option>
+          </select></div>
+      </div>
+      <div class="frow"><label class="lbl">Description</label><textarea class="inp" rows="2" style="resize:vertical" onchange="AD.projects[${i}].description=this.value">${x(p.description||'')}</textarea></div>
+      <div class="frow">
+        <label class="lbl">Screenshot</label>
+        <div class="urow">
+          <div id="pi-${i}">${prv}</div>
+          <label style="cursor:pointer"><span class="btn bg_ bsm">Upload</span><input type="file" accept="image/*" style="display:none" onchange="upPI(this,${i})"/></label>
+          <input class="inp" style="flex:1;min-width:120px;font-size:.8rem" placeholder="Or paste URL..."
+            value="${p.image&&!p.image.startsWith('data:')?p.image:''}"
+            onchange="AD.projects[${i}].image=this.value||null;document.getElementById('pi-${i}').innerHTML=this.value?'<img src=\''+this.value+'\' class=\'prv-i\'/>':'<div class=\'prv-n\'>NONE</div>'"/>
+          ${p.image?`<button class="btn bd bsm" onclick="AD.projects[${i}].image=null;renderPrAdm()">✕</button>`:''}
+        </div>
+      </div>
+      <div class="frow"><label class="lbl">Tech Stack (comma separated)</label><input class="inp" value="${x((p.tech||[]).join(', '))}" onchange="AD.projects[${i}].tech=this.value.split(',').map(s=>s.trim()).filter(Boolean)"/></div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:11px;align-items:end">
+        <div><label class="lbl">GitHub URL</label><input class="inp" value="${x(p.github||'')}" onchange="AD.projects[${i}].github=this.value" placeholder="https://github.com/..."/></div>
+        <div style="display:flex;align-items:center;gap:8px;padding-bottom:2px">
+          <button class="tog ${on}" id="ghtog-${i}" onclick="AD.projects[${i}].showGithub=!AD.projects[${i}].showGithub;this.classList.toggle('on')"></button>
+          <span style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--mu);white-space:nowrap">Show</span>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+function addProj(){AD.projects=AD.projects||[];AD.projects.push({id:Date.now(),title:'New Project',subtitle:'Category',description:'Description.',image:null,tech:['React'],github:'#',showGithub:true,status:'WIP'});renderPrAdm();}
+function upPI(inp,i){
+  const f=inp.files[0];if(!f)return;
+  b64(f,v=>{AD.projects[i].image=v;const p=document.getElementById(`pi-${i}`);if(p)p.innerHTML=`<img src="${v}" class="prv-i"/>`;renderPrAdm();});
+}
+
+/* ── Sections ── */
+const SECS=[
+  ['hero',      'Hero / About Section', 'Main landing section'],
+  ['skills',    'Skills Section',       'Technical skills & tools'],
+  ['experience','Experience Section',   'Work history timeline'],
+  ['projects',  'Projects Section',     'Project showcase grid'],
+  ['contact',   'Contact Section',      'Contact form'],
+  ['github',    'GitHub Link',          'Profile card & footer'],
+  ['linkedin',  'LinkedIn Link',        'Profile card & footer'],
+  ['cv',        'CV Download Button',   'Download button in hero'],
+];
+function renderSecAdm(){
+  const list=document.getElementById('sec-togs');list.innerHTML='';
+  SECS.forEach(([k,lb,dc])=>{
+    const v=(AD.sections||{})[k]!==false;
+    const card=mk('div','glass stog');
+    card.innerHTML=`
+      <div>
+        <div class="stog-ttl">${lb}</div>
+        <div class="stog-dsc">${dc} — <span style="color:${v?'var(--a)':'var(--re)'}" id="st-${k}">${v?'visible':'hidden'}</span></div>
+      </div>
+      <button class="tog ${v?'on':''}" id="stb-${k}" onclick="togS('${k}')"></button>`;
+    list.appendChild(card);
+  });
+}
+function togS(k){
+  if(!AD.sections)AD.sections={};
+  AD.sections[k]=!(AD.sections[k]!==false);
+  const v=AD.sections[k];
+  document.getElementById(`stb-${k}`)?.classList.toggle('on',v);
+  const s=document.getElementById(`st-${k}`);
+  if(s){s.textContent=v?'visible':'hidden';s.style.color=v?'var(--a)':'var(--re)';}
+}
+
+/* ────────────────────────────────────────
+   ADMIN SAVE → writes data.js + data.json
+──────────────────────────────────────── */
+async function adminSave(){
+  // Collect all form values
+  AD.name       = gv('a-name')  || AD.name;
+  AD.role       = gv('a-role')  || AD.role;
+  AD.bio        = gv('a-bio')   || AD.bio;
+  AD.email      = gv('a-email') || AD.email;
+  AD.location   = gv('a-loc')   || AD.location;
+  AD.github     = gv('a-gh');
+  AD.linkedin   = gv('a-li');
+  AD.webhookUrl = gv('a-wh');
+  const cvf     = gv('a-cvurl'); if(cvf) AD.cvUrl=cvf;
+  AD.tools      = (gv('a-tools')||'').split(',').map(s=>s.trim()).filter(Boolean);
+
+  const pill = document.getElementById('ab-pill');
+  const btns = document.querySelectorAll('#sv-top,#sv-bot');
+
+  // Show saving state
+  pill.textContent='⟳ Saving...'; pill.className='ab-pill saving'; pill.style.display='';
+  btns.forEach(b=>{b.disabled=true;b.innerHTML='<span class="spin"></span> Saving...';});
+
+  if(!IS_LOCAL){
+    pill.textContent='⚠ Admin only works locally';
+    pill.className='ab-pill error'; pill.style.display='';
+    btns.forEach(b=>{b.disabled=false;b.innerHTML='Save &amp; Update File';});
+    return;
+  }
+
+  try{
+    const r=await fetch('/api/save',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(AD)
+    });
+    const j=await r.json();
+    if(!j.ok) throw new Error(j.error||'Save failed');
+
+    // Update live data
+    D=JSON.parse(JSON.stringify(AD));
+
+    pill.textContent='✓ data.js updated — git push to deploy';
+    pill.className='ab-pill saved'; pill.style.display='';
+    setTimeout(()=>pill.style.display='none',4000);
+  }catch(e){
+    pill.textContent='✗ Error: '+e.message;
+    pill.className='ab-pill error'; pill.style.display='';
+    setTimeout(()=>pill.style.display='none',5000);
+  }
+
+  btns.forEach(b=>{b.disabled=false;b.innerHTML='Save &amp; Update File';});
+}
+
+/* ────────────────────────────────────────
+   TABS
+──────────────────────────────────────── */
+function tab(name){
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.getElementById(`tp-${name}`)?.classList.add('on');
+  document.querySelectorAll('.tbtn').forEach(b=>{if(b.getAttribute('onclick')?.includes(`'${name}'`))b.classList.add('on');});
+}
+
+/* ────────────────────────────────────────
+   HELPERS
+──────────────────────────────────────── */
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+function mk(t,c=''){const e=document.createElement(t);if(c)e.className=c;return e;}
+function x(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function gv(id){return(document.getElementById(id)?.value||'').trim();}
+function siv(id,v){const e=document.getElementById(id);if(e)e.value=v||'';}
+function ss(sel){document.querySelector(sel)?.scrollIntoView({behavior:'smooth'});}
+function sv(id,vis){const e=document.getElementById(id);if(e)e.style.display=vis?'':'none';}
+function b64(file,cb){const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(file);}
+function setY(){const y=new Date().getFullYear();document.querySelectorAll('#ft-yr').forEach(e=>e.textContent=y);const h=document.getElementById('h-yr');if(h)h.textContent=`Portfolio ${y}`;}
+function calcY(exp){let m=new Date().getFullYear();exp.forEach(e=>{const r=(e.period||'').match(/(\d{4})/);if(r&&+r[1]<m)m=+r[1];});return new Date().getFullYear()-m;}
+
+function embeddedDefaults(){
+  return{
+    name:'Alex Rivera',role:'Full-Stack Developer & UI/UX Designer',
+    bio:"I build beautiful, functional things for the web.",
+    email:'alex@portfolio.dev',location:'San Francisco, CA',github:'',linkedin:'',cvUrl:'',profileImage:null,webhookUrl:'',
+    sections:{hero:true,skills:true,experience:true,projects:true,contact:true,github:true,linkedin:true,cv:true},
+    tools:['React','TypeScript','Node.js','Python','PostgreSQL','Docker','AWS','Figma','Git'],
+    skills:[{name:'React / Next.js',level:95},{name:'TypeScript',level:90},{name:'Node.js',level:85},{name:'UI/UX Design',level:80}],
+    experience:[{company:'NeuralTech Inc.',role:'Senior Frontend Engineer',period:'2022 — Present',desc:'Lead developer for AI-powered SaaS platform.'},{company:'Freelance',role:'Independent Consultant',period:'2018 — 2022',desc:'Delivered 20+ projects for startups.'}],
+    projects:[{id:1,title:'NeuralDash',subtitle:'AI Analytics Platform',description:'A dashboard for ML model performance.',image:null,tech:['React','TypeScript'],github:'#',showGithub:true,status:'Live'}]
+  };
+}
+</script>
+</body>
+</html>
